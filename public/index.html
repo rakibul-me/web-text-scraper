@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extract text and img url's from any website</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <body>
+    <div class="container py-3">
+      <div class="text-center">
+        <img
+          src="https://scrapfly.io/blog/content/images/web-scraping-with-puppeteer-and-nodejs_banner_light.svg"
+          alt=""
+          width="300"
+        />
+      </div>
+      <h1 class="text-center">
+        Extract plain text and image url from any website
+      </h1>
+      <form id="form" class="px-2">
+        <h3 class="py-3 text-center">Enter Website URL</h3>
+        <div class="form-group row d-flex justify-content-center">
+          <label for="url" class="col-md-2">URL: </label>
+          <input
+            type="url"
+            class="form-control col-md-6"
+            id="url"
+            placeholder="https://google.com"
+            required
+          />
+        </div>
+        <div class="form-group row d-flex justify-content-center">
+          <label for="max-character" class="col-md-2">Max Character: </label>
+          <input
+            type="number"
+            class="form-control col-md-6"
+            id="max-character"
+            step="1"
+          />
+        </div>
+        <div class="row d-flex justify-content-center my-4">
+          <button id="submit" type="submit" class="btn btn-primary m-1">
+            Submit
+          </button>
+          <button
+            id="loading"
+            class="btn btn-secondary m-1 d-none"
+            type="button"
+            disabled
+          >
+            <span
+              class="spinner-border spinner-border-sm text-warning"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            Loading...
+          </button>
+          <button type="reset" class="btn btn-danger m-1">Reset</button>
+        </div>
+        <div class="form-group row d-flex justify-content-center">
+          <label for="result" class="col-md-2">Result: </label>
+          <textarea
+            class="form-control col-md-6"
+            id="result"
+            rows="10"
+          ></textarea>
+        </div>
+      </form>
+    </div>
+    <script>
+      let form = document.querySelector("#form");
+      let submit = document.querySelector("#submit");
+      let loading = document.querySelector("#loading");
+      let result = document.querySelector("#result");
+      let url = document.querySelector("#url");
+      let maxCharacter = document.querySelector("#max-character");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        submit.classList.add("d-none");
+        loading.classList.remove("d-none");
+
+        try {
+          let apiURL = `/api?url=${url.value}`;
+          if (maxCharacter.value)
+            apiURL += `&maxCharacter=${maxCharacter.value}`;
+          let res = await fetch(apiURL);
+          if (res.status === 200) {
+            res = await res.json();
+            result.value = res.extractedText;
+          } else {
+            alert(res.statusText);
+          }
+        } catch (error) {
+          alert(`Something went wrong. \n${error.message}`);
+        }
+
+        submit.classList.remove("d-none");
+        loading.classList.add("d-none");
+      });
+    </script>
+  </body>
+</html>
