@@ -33,12 +33,8 @@ const extractTextAndImage = async (url) => {
   let page;
 
   try {
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({ args: ["--no-sandbox"] });
     page = (await browser.pages())[0];
-
-    await page.evaluateOnNewDocument(() => {
-      delete navigator.__proto__.webdriver;
-    });
 
     await page.goto(url, { waitUntil: "load", timeout: 60000 });
 
